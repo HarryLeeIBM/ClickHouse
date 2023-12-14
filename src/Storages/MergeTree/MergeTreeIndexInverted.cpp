@@ -111,12 +111,27 @@ MergeTreeIndexGranulePtr MergeTreeIndexAggregatorInverted::getGranuleAndReset()
 
 void MergeTreeIndexAggregatorInverted::addToGinFilter(UInt32 rowID, const char * data, size_t length, GinFilter & gin_filter)
 {
-    size_t cur = 0;
-    size_t token_start = 0;
-    size_t token_len = 0;
+    if (params.ngrams > 0)
+    {
+        size_t cur = 0;
+        size_t token_start = 0;
+        size_t token_len = 0;
 
-    while (cur < length && token_extractor->nextInStringPadded(data, length, &cur, &token_start, &token_len))
-        gin_filter.add(data + token_start, token_len, rowID, store);
+        while (cur < length && token_extractor->nextInStringPadded(data, length, &cur, &token_start, &token_len))
+            gin_filter.add(data + token_start, token_len, rowID, store);
+    }
+    else
+    {
+        fts_token_extractor.openText(data, length);
+        const char *token_start = nullptr;
+        size_t token_length = 0;
+        while(fts_token_extractor.nextToken(token_start, token_length))
+        {
+            if (token_length >=2)
+                gin_filter.add(token_start, token_length, rowID, store);
+        }
+        fts_token_extractor.closeText();
+    }
 }
 
 void MergeTreeIndexAggregatorInverted::update(const Block & block, size_t * pos, size_t limit)

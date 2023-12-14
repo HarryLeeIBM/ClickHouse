@@ -8,7 +8,7 @@ using namespace DB;
 
 TEST(FTSTokenExtractor, SimpleTest)
 {
-    String test_string = "ABC TEST XYZ";
+    String test_string = "The quick(\"brown\") fox can't jump 32.3 feet,right?";
     FTSTokenExtractor token_extractor;
 
     token_extractor.openText(test_string.c_str(), test_string.length());

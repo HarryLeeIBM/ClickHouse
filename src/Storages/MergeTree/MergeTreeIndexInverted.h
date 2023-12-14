@@ -2,6 +2,7 @@
 
 #include <Interpreters/GinFilter.h>
 #include <Interpreters/ITokenExtractor.h>
+#include <Interpreters/FTSTokenExtractor.h>
 #include <Storages/MergeTree/KeyCondition.h>
 #include <Storages/MergeTree/MergeTreeData.h>
 #include <base/types.h>
@@ -57,6 +58,7 @@ struct MergeTreeIndexAggregatorInverted final : IMergeTreeIndexAggregator
     TokenExtractorPtr token_extractor;
 
     MergeTreeIndexGranuleInvertedPtr granule;
+    FTSTokenExtractor fts_token_extractor;
 };
 
 
